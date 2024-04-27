@@ -1,0 +1,70 @@
+1.
+    Bilateral filtering requires using a weighting function (like gaussian)
+    along with a way to factor in difference in intensities. Finding the
+    difference in intensity is quite cheap, but to weight it requires
+    using an exponential or some other method to have a bell shape. I
+    handle the normalization factor by figuring out the scalar on the outside
+    of the matrix during the operation and also by using parallel threading
+    to compute pixels at the same time. I did also take some shortcuts such
+    as using abs vs x^2 to save some computation though it is quite
+    minimal. The main extra computation is factoring in the difference
+    in intensities between the current pixel and the center, which is
+    not super intensive for small kernel sizes.
+
+
+2.
+    The range of values we are representing is far to large to be scaled
+    correctly. Details in the image in similar light levels will get lost
+    since they are close to each other with respect to the total range.
+    This leads to only showing the differences in the image with the 
+    widest luminance differences. Our fixes in the other methods try
+    to preserve the details by accepting the lighting in two different 
+    areas will have the same output intensity in order to keep details.
+
+
+3.
+    A Pixel is a rectangle area of an image from a certain start (x,y) position
+    to and end (x,y) position. The value of the pixel depends on the formula
+    used to represent all of the colors in the area. Methods can be the
+    average of the colors, or the color at the center of the area.
+
+    A pixel depends on the scaling used for an image. It could be 
+    1 unit apart in each direction, or several units.
+
+    For my assignments, I try to have the pixel as a point where I 
+    directly same the color from there, rather than having it be the
+    average of an area.
+
+4.
+
+    Ha's output image will just have the image be shifted up 1 pixel
+    since (x,y)'s value is just the pixel above it's value.
+
+    Hb's output image blurs the origional image with emphasis on where there
+    are vertical changes in intensity. So a vertical strip of all white 
+    while appear very obvious since the kernel has a 2x multiplier in the
+    center column.
+
+    Hc's output image shows locations of where the image vertically goes from
+    lower intensities to higher intensities.
+    
+5.
+
+HSV diagram in same directory.
+
+Hue determines which color we are dealing with, such as red, yellow, etc.
+It ranges from 0 to 360 degrees where each color is within a certain range
+of the circle.
+
+Saturation determines how much of the output color is grey vs the 
+Hue value. It ranges from 0 to 1 with 1 being only the color from Hue.
+
+Value determines the brightness of the color wich also goes from 0 to 1.
+This adds in blackness to the image where 0 is black and 1 is the actual
+color. It works with Saturation to account for light levels.
+
+Few examples:
+To get white, you need 0 saturation and 1 for value.
+To get back, you need value to be 0.
+For any particular color, adjust the Hue to be in the correct range
+on the circle
